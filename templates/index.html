@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+
+{% block title %}Página Principal - JMP GAMES{% endblock %}
+
+{% block content %}
+<!-- A BARRA DE NAVEGAÇÃO SECUNDÁRIA FOI COMPLETAMENTE REMOVIDA -->
+<!-- O campo de busca agora precisa ser movido para o layout principal -->
+
+<div class="container-fluid">
+    {% if isSearch %}
+        <h2 class="mt-4">Resultados da Busca por: "{{ searchTerm }}"</h2>
+        <section class="search-results-container">
+            {% if jogos %}
+                {% for jogo in jogos %}
+                    <a href="{{ url_for('detalhes_jogo', id=jogo.id) }}" class="game-link" style="text-decoration: none; color: inherit;">
+                        <div class="game">
+                            <img src="{{ jogo.imagem }}" alt="{{ jogo.nome }}">
+                            <p>{{ jogo.nome }}</p>
+                            <div class="preco-container">
+                                {% if jogo.desconto > 0 %}
+                                    <span class="desconto">-{{ jogo.desconto }}%</span>
+                                {% endif %}
+                                <span class="preco">R$ {{ "%.2f"|format(jogo.preco * (1 - jogo.desconto / 100)) }}</span>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <p style="color: white; text-align: center;">Nenhum jogo encontrado.</p>
+            {% endif %}
+        </section>
+    
+    {% else %}
+        <!-- Exibição padrão com os dois carrosséis -->
+        <h2 class="mt-4">Lançamentos</h2>
+        <section class="carrossel-container">
+            <button class="botaoanterior">◀</button>
+            <div class="lista">
+                {% for jogo in lancamentos %}
+                    <a href="{{ url_for('detalhes_jogo', id=jogo.id) }}" class="game-link" style="text-decoration: none; color: inherit;">
+                        <div class="game">
+                            <img src="{{ jogo.imagem }}" alt="{{ jogo.nome }}">
+                            <p>{{ jogo.nome }}</p>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+            <button class="botaoprox">▶</button>
+        </section>
+    
+        <h2 class="mt-4">Ofertas em Promoção</h2>
+        <section class="carrossel-container">
+            <button class="botaoanterior">◀</button>
+            <div class="lista">
+                {% for jogo in ofertas %}
+                     <a href="{{ url_for('detalhes_jogo', id=jogo.id) }}" class="game-link" style="text-decoration: none; color: inherit;">
+                        <div class="game">
+                            <img src="{{ jogo.imagem }}" alt="{{ jogo.nome }}">
+                            <p>{{ jogo.nome }}</p>
+                            <div class="preco-container">
+                                <span class="desconto">-{{ jogo.desconto }}%</span>
+                                <span class="preco">R$ {{ "%.2f"|format(jogo.preco * (1 - jogo.desconto / 100)) }}</span>
+                            </div>
+                        </div>
+                    </a>
+                {% endfor %}
+            </div>
+            <button class="botaoprox">▶</button>
+        </section>
+    {% endif %}
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        function configurarCarrossel(carrossel) {
+            const lista = carrossel.querySelector(".lista");
+            const prevBtn = carrossel.querySelector(".botaoanterior");
+            const nextBtn = carrossel.querySelector(".botaoprox");
+            if (!lista) return;
+
+            const scrollAmount = 220;
+
+            if (nextBtn) {
+                nextBtn.addEventListener("click", () => {
+                    lista.scrollBy({ left: scrollAmount, behavior: "smooth" });
+                });
+            }
+
+            if (prevBtn) {
+                prevBtn.addEventListener("click", () => {
+                    lista.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+                });
+            }
+        }
+        document.querySelectorAll(".carrossel-container").forEach(configurarCarrossel);
+    });
+</script>
+{% endblock %}

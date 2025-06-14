@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block title %}Meu Carrinho{% endblock %}
+
+{% block head_extra %}
+<style>
+    .cart-item { display: flex; align-items: center; background-color: #1b2838; margin-bottom: 15px; padding: 15px; border-radius: 5px; color: #c7d5e0; }
+    .cart-item img { width: 120px; height: auto; margin-right: 20px; border-radius: 4px; }
+    .cart-item-info { flex-grow: 1; }
+    .cart-total { text-align: right; font-size: 1.5em; margin-top: 20px; color: white; }
+    .btn-remove { background-color: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; }
+    .btn-checkout { background-color: #70a02b; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-size: 1.2em; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Meu Carrinho de Compras</h2>
+    <hr style="background-color: #c7d5e0;">
+
+    {% if carrinho_jogos %}
+        {% for jogo in carrinho_jogos %}
+        <div class="cart-item">
+            <img src="{{ jogo.imagem }}" alt="{{ jogo.nome }}">
+            <div class="cart-item-info">
+                <h4>{{ jogo.nome }}</h4>
+                <h5>R$ {{ "%.2f"|format(jogo.preco * (1 - jogo.desconto / 100)) }}</h5>
+            </div>
+            <form action="{{ url_for('remover_do_carrinho', id=jogo.id) }}" method="POST">
+                <button type="submit" class="btn-remove">Remover</button>
+            </form>
+        </div>
+        {% endfor %}
+
+        <div class="cart-total">
+            <h4>Total: R$ {{ "%.2f"|format(total) }}</h4>
+        </div>
+
+        <div class="text-end mt-4">
+            <form action="{{ url_for('finalizar_compra_carrinho') }}" method="POST">
+                <button type="submit" class="btn-checkout">Finalizar Compra</button>
+            </form>
+        </div>
+    {% else %}
+        <p style="color: white;">Seu carrinho está vazio.</p>
+    {% endif %}
+</div>
+{% endblock %}

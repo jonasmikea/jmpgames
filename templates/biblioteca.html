@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}Minha Biblioteca{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 20px; color: white;">
+    <h1>Minha Biblioteca</h1>
+    <hr>
+    <section class="search-results-container">
+        {% if jogos %}
+            {% for jogo in jogos %}
+            <div class="game">
+                <img src="{{ jogo.imagem }}" alt="{{ jogo.nome }}">
+                <p>{{ jogo.nome }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>Você ainda não possui nenhum jogo na sua biblioteca.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

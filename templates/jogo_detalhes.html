@@ -1,0 +1,119 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ jogo.nome }}{% endblock %}
+
+{% block head_extra %}
+<style>
+    .details-container {
+        display: flex;
+        flex-wrap: wrap;
+        color: #c7d5e0;
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+        gap: 40px;
+    }
+    .game-image {
+        flex: 1 1 400px; /* Flex-grow, flex-shrink, flex-basis */
+    }
+    .game-image img {
+        width: 100%;
+        border-radius: 8px;
+    }
+    .game-info {
+        flex: 2 1 600px;
+    }
+    .game-info h1 {
+        color: #fff;
+        font-size: 3em;
+    }
+    .game-rating {
+        font-size: 1.5em;
+        color: #66c0f4;
+    }
+    .game-description {
+        margin: 20px 0;
+        line-height: 1.6;
+    }
+    .price-box {
+        background-color: #1b2838;
+        padding: 20px;
+        border-radius: 5px;
+        margin-top: 20px;
+    }
+    .final-price {
+        font-size: 2em;
+        color: #66c0f4;
+        font-weight: bold;
+    }
+    .action-buttons {
+        margin-top: 20px;
+        display: flex;
+        gap: 15px;
+    }
+    .action-buttons .btn {
+        padding: 15px 30px;
+        border: none;
+        border-radius: 4px;
+        font-size: 1.1em;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+    }
+    .btn-buy {
+        background-color: #70a02b;
+        color: white;
+    }
+    .btn-cart {
+        background-color: #66c0f4;
+        color: #1b2838;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="details-container">
+    <div class="game-image">
+        <img src="{{ jogo.imagem }}" alt="{{ jogo.nome }}">
+    </div>
+    <div class="game-info">
+        <h1>{{ jogo.nome }}</h1>
+        <div class="game-description">
+            <p>{{ jogo.descricao or 'Descrição não disponível.' }}</p>
+        </div>
+        <div class="price-box">
+            <span class="final-price">R$ {{ "%.2f"|format(jogo.preco * (1 - jogo.desconto / 100)) }}</span>
+            <div class="action-buttons">
+                <button type="button" class="btn btn-buy" data-bs-toggle="modal" data-bs-target="#confirmacaoCompraModal">
+                    Comprar Agora
+                </button>
+                <form action="{{ url_for('add_carrinho', id=jogo.id) }}" method="POST">
+                    <button type="submit" class="btn btn-cart">Adicionar ao Carrinho</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmacaoCompraModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background-color: #1b2838; color: #c7d5e0;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Confirmar Compra de {{ jogo.nome }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        O que você deseja fazer?
+      </div>
+      <div class="modal-footer">
+        <form action="{{ url_for('add_carrinho', id=jogo.id) }}" method="POST" style="display: inline;">
+            <button type="submit" class="btn btn-secondary">Continuar Comprando</button>
+        </form>
+        <form action="{{ url_for('finalizar_compra', id=jogo.id) }}" method="POST" style="display: inline;">
+            <button type="submit" class="btn btn-success">Finalizar Compra</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
